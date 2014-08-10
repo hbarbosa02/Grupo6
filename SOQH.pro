@@ -8,5 +8,7 @@ HEADERS += \
 SOURCES += \
     menugui.cpp \
     main.cpp
-QT += widgets
+QT += \
+    widgets \
+    sql
 CONFIG += qt
