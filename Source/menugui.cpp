@@ -1,6 +1,10 @@
 #include "menugui.h"
 #include "ui_menugui.h"
 #include <QMessageBox>
+#include <QtGui>
+#include <QtSql/QSqlDatabase>
+#include <QtSql/QSqlQuery>
+#include <QtSql/QSqlError>
 
 MenuGUI::MenuGUI(QWidget *parent) :
     QDialog(parent),
@@ -13,6 +17,8 @@ MenuGUI::MenuGUI(QWidget *parent) :
     ui->cmb_db->setFocus();
     ui->cmb_db->setCurrentIndex(-1);
 
+    valores_iniciais();
+
     connect(ui->btn_conectar, SIGNAL(clicked()), this, SLOT(conectar_db()));
     connect(ui->btn_desconectar, SIGNAL(clicked()), this, SLOT(desconectar_db()));
     connect(ui->btn_executar, SIGNAL(clicked()), this, SLOT(exec_sql()));
@@ -21,6 +27,12 @@ MenuGUI::MenuGUI(QWidget *parent) :
 MenuGUI::~MenuGUI()
 {
     delete ui;
+}
+
+void MenuGUI::valores_iniciais()
+{
+    ui->cmb_db->setCurrentIndex(0);
+    ui->edt_schema->setText("Schema.db");
 }
 
 void MenuGUI::conectar_db()
@@ -60,7 +72,7 @@ void MenuGUI::conectar_db()
     // usuário e senha
     if (ui->cmb_db->currentIndex() == 0)
     {
-        // Conectar...
+        concluir_conectar();
         return;
     }
 
@@ -81,9 +93,42 @@ void MenuGUI::conectar_db()
     }
 }
 
+void MenuGUI::concluir_conectar()
+{
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName(ui->edt_schema->text().trimmed());
+
+    if (!db.open())
+    {
+        QMessageBox::critical(this, "Falha ao Conectar", QString("Falha na conexão com o banco\n[Schema: " + ui->edt_schema->text() + "]\n" + db.lastError().text()), QMessageBox::Cancel);
+        return;
+    }
+
+    QSqlQuery qry;
+    qry.prepare("select datetime('now')");
+    if (!qry.exec())
+    {
+        QString erro = db.lastError().text();
+        QMessageBox::critical(this, "Fallha ao Conectar", QString("Falha ao efetuar query para validacao da conexao\n" + qry.lastError().text()), QMessageBox::Cancel);
+
+        return;
+    }
+    else if (qry.next())
+        QMessageBox::information(this, "SOQH DB", "Conexão efetuada com sucesso!\n[" + qry.value(0).toDateTime().toString() + "]");
+
+    habilita_query(true);
+    ui->txt_sql->setFocus();
+}
+
 void MenuGUI::desconectar_db()
 {
-    //Função para desconectar
+    QSqlDatabase db = QSqlDatabase::database();
+    db.close();
+
+    habilita_query(false);
+
+    ui->cmb_db->setFocus();
+    valores_iniciais();
 }
 
 void MenuGUI::exec_sql()
@@ -111,4 +156,17 @@ void MenuGUI::habilita_query(bool ind_executa)
     ui->btn_executar->setEnabled(ind_executa);
     ui->txt_sql->setEnabled(ind_executa);
     ui->tbl_sql->setEnabled(ind_executa);
+}
+
+void MenuGUI::changeEvent(QEvent *e)
+{
+    QDialog::changeEvent(e);
+    switch (e->type())
+    {
+    case QEvent::LanguageChange:
+        ui->retranslateUi(this);
+        break;
+    default:
+        break;
+    }
 }
