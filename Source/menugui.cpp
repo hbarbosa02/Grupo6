@@ -1,10 +1,13 @@
 #include "menugui.h"
 #include "ui_menugui.h"
+
 #include <QMessageBox>
 #include <QtGui>
+
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlError>
+#include <QSqlQueryModel>
 
 MenuGUI::MenuGUI(QWidget *parent) :
     QDialog(parent),
@@ -22,10 +25,13 @@ MenuGUI::MenuGUI(QWidget *parent) :
     connect(ui->btn_conectar, SIGNAL(clicked()), this, SLOT(conectar_db()));
     connect(ui->btn_desconectar, SIGNAL(clicked()), this, SLOT(desconectar_db()));
     connect(ui->btn_executar, SIGNAL(clicked()), this, SLOT(exec_sql()));
+
+    mdl_qry = new QSqlQueryModel;
 }
 
 MenuGUI::~MenuGUI()
 {
+    delete mdl_qry;
     delete ui;
 }
 
@@ -133,7 +139,66 @@ void MenuGUI::desconectar_db()
 
 void MenuGUI::exec_sql()
 {
-    //Executar função em SQL
+    mdl_qry->clear();
+    ui->tbl_sql->setModel(NULL);
+
+    if(ui->txt_sql->toPlainText().trimmed().isEmpty())
+    {
+        QMessageBox::information(this, "Instrução SQL",
+                                 "Não há instrução SQL a ser executada");
+        ui->txt_sql->setFocus();
+        return;
+    }
+
+    QString sql = ui->txt_sql->toPlainText();
+    if (sql.toUpper().startsWith("SELECT"))
+    {
+        mdl_qry->setQuery(sql);
+        ui->tbl_sql->setModel(mdl_qry);
+        if (mdl_qry->lastError().isValid())
+        {
+            QMessageBox::critical(this, "SOQH SQL - ERRO",
+                                  mdl_qry->lastError().text());
+            ui->txt_sql->setFocus();
+            return;
+        }
+
+        QMessageBox::information(this, "SOQH SQL",
+                                 "Instrução SQL executada com sucesso");
+
+    }
+    else
+    {
+        QStringList sqls = sql.split(";");
+        QString strRows;
+
+        int numRows = 0;
+        for (int i = 0; i < sqls.size(); i++)
+        {
+            QString tmpSql = sqls.at(i);
+            if (tmpSql.trimmed().isEmpty())
+                continue;
+
+            QSqlQuery qry;
+            qry.prepare(sqls.at(i));
+            if (!qry.exec())
+            {
+                strRows.setNum(numRows);
+                QString numScript;
+                numScript.setNum(i+1);
+                QMessageBox::critical(this, "SOQH SQL - ERRO",
+                                      "Falha ao executar script [" + numScript + "]\n" + strRows + "] linha(s) afetada(s)\n" + qry.lastError().text());
+                ui->txt_sql->setFocus();
+                return;
+            }
+
+            numRows += qry.numRowsAffected();
+        }
+
+        strRows.setNum(numRows);
+        QMessageBox::information(this, "SOQH SQL",
+                                 "Instrução SQL executada com sucesso\n[" + strRows + "] linha(s) afetadas(s)");
+    }
 }
 
 void MenuGUI::habilita_query(bool ind_executa)
