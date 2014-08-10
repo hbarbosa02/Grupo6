@@ -2,9 +2,10 @@
 #define MENUGUI_H
 
 #include <QDialog>
+#include <QSqlQueryModel>
 
 namespace Ui {
-class MenuGUI;
+    class MenuGUI;
 }
 
 class MenuGUI : public QDialog
@@ -19,9 +20,15 @@ public:
     explicit MenuGUI(QWidget *parent = 0);
     ~MenuGUI();
 
+protected:
+    void changeEvent(QEvent *e);
+
 private:
     Ui::MenuGUI *ui;
+    QSqlQueryModel *mdl_qry;
     void habilita_query(bool ind_executa);
+    void valores_iniciais();
+    void concluir_conectar();
 };
 
 #endif // MENUGUI_H
