@@ -1,4 +1,5 @@
 TEMPLATE = app
+
 FORMS += \
     menugui.ui
 
@@ -8,7 +9,7 @@ HEADERS += \
 SOURCES += \
     menugui.cpp \
     main.cpp
+    
 QT += \
     widgets \
     sql
-CONFIG += qt
