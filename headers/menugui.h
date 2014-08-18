@@ -1,34 +1,34 @@
-#ifndef MENUGUI_H
-#define MENUGUI_H
+#ifndef MENUSQL_H
+#define MENUSQL_H
 
 #include <QDialog>
 #include <QSqlQueryModel>
 
 namespace Ui {
-    class MenuGUI;
+    class MenuSQL;
 }
 
-class MenuGUI : public QDialog
+class MenuSQL : public QDialog
 {
     Q_OBJECT
 public slots:
-    void conectar_db();
-    void desconectar_db();
-    void exec_sql();
+    void validarCampos();
+    void desconectar();
+    void enviarQuery();
 
 public:
-    explicit MenuGUI(QWidget *parent = 0);
+    explicit MenuSQL(QWidget *parent = 0);
     ~MenuGUI();
 
 protected:
     void changeEvent(QEvent *e);
 
 private:
-    Ui::MenuGUI *ui;
-    QSqlQueryModel *mdl_qry;
-    void habilita_query(bool ind_executa);
-    void valores_iniciais();
-    void concluir_conectar();
+    Ui::MenuSQL *ui;
+    QSqlQueryModel *txt_query;
+    void habilitar_query(bool ativo);
+    void valoresIniciais();
+    void conectarSQL();
 };
 
-#endif // MENUGUI_H
+#endif // MENUSQL_H
