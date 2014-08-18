@@ -1,13 +1,13 @@
 TEMPLATE = app
 
 FORMS += \
-    menugui.ui
+    menusql.ui
 
 HEADERS += \
-    menugui.h
+    menusql.h
 
 SOURCES += \
-    menugui.cpp \
+    menusql.cpp \
     main.cpp
     
 QT += \
