@@ -19,7 +19,7 @@ void cadastro::on_btn_restricoes_clicked()
    // menucadastro restricao;
    // restricao.setModal(true);
    // restricao.exec();
-    restricao = new menucadastro(this);
+   // restricao = new menucadastro(this);
     restricao->show();
 
 }
