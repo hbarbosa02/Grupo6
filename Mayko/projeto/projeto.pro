@@ -14,10 +14,13 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    cadastro.cpp
+    cadastro.cpp \
+    menucadastro.cpp
 
 HEADERS  += mainwindow.h \
-    cadastro.h
+    cadastro.h \
+    menucadastro.h
 
 FORMS    += mainwindow.ui \
-    cadastro.ui
+    cadastro.ui \
+    menucadastro.ui

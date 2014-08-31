@@ -63,16 +63,6 @@
      <widget class="QComboBox" name="comboBox">
       <item>
        <property name="text">
-        <string>Circuito e Instrumentação</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Matematica aplicada a engenharia(MATLAB)</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
         <string/>
        </property>
       </item>
@@ -89,6 +79,16 @@
       <item>
        <property name="text">
         <string>Calculo 3</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Circuito e Instrumentação</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Matematica aplicada a engenharia(MATLAB)</string>
        </property>
       </item>
      </widget>

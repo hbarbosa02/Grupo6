@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "cadastro.h"
+#include "menucadastro.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
